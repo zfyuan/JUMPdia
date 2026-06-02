@@ -1,0 +1,104 @@
+##############################
+###### DIANNParams      ######
+##############################
+
+# the abosulte path of .d folders or .mzML files or .raw files
+data_path = /home/zyuan1/DIATutorial_DIANN2/data1
+
+# the .fasta file(s) with the abosulte path (use ";" to combine multiple FASTA files to one row for "fasta_file")
+# e.g. fasta_file = /home/zyuan1/DIATutorial_DIANN2/lib20241127/HUMAN_SCHPO/HUMAN_1_sp_tr.fasta;/home/zyuan1/DIATutorial_DIANN2/lib20241127/HUMAN_SCHPO/SCHPO_1_sp_tr.fasta
+fasta_file = /home/zyuan1/DIATutorial_DIANN2/lib20241127/HUMAN/HUMAN_6_sp_tr_uc_snp_con_cu.fasta
+
+##############################
+###### 1. LibGen.params ######
+##############################
+
+# Digestion rule
+protease = Trypsin_P                                  # default: Trypsin_P (involve cuts at K* and R*)
+                                                      # other options: Trypsin (involve cuts at K* and R*, but excluding cuts at *P)
+                                                      #                Lys_C (involve cuts at K*)
+                                                      #                Chymotrypsin (involve cuts at F*, Y*, W*, M* and L*, but excluding cuts at *P)
+                                                      #                AspN (involve cuts at *D)
+                                                      #                GluC (involve cuts at E*)
+n_missed_cleavages = 2                                # number of missed cleavages
+min_pep_length = 7                                    # minimum peptide length
+max_pep_length = 30                                   # maximum peptide length
+
+# Fixed modifications
+C_carbamidomethylation = 0                            # enable cystine carbamidomethylation as a fixed modification, 0 = off; 1 = on
+
+# Variable modifications
+M_oxidation = 1                                       # enable methionine oxidation as a variable modification, 0 = off; 1= on
+N_term_M_excision = 1                                 # enable protein N-terminal methionine excision as a variable modification, 0 = off; 1 = on
+max_n_variable_mod = 2                                # maximum number of variable modifications
+
+# Post-translational modifications (PTMs) 
+N_term_acetylation = 0                                # enable protein N-terminal acetylation as a variable modification / score sites, 0 = off; 1 = on
+Phosphorylation = 0                                   # enable S, T, Y phosphorylation as a variable modification / score sites, 0 = off; 1 = on
+K_GG_addcut = 0                                       # enable -GG adduct on lysines (left after tryptic digest of an attached ubiquitin) as a variable modification / score sites, 0 = off; 1 = on
+
+# Precursor ion properties
+min_prec_charge = 1                                   # minimum precursor charge
+max_prec_charge = 4                                   # maximum precursor charge
+min_prec_mz = 400                                     # minimum precursor m/z
+max_prec_mz = 1200                                    # maximum precursor m/z
+
+# Fragment ion properties
+min_frag_mz = 200                                     # minimum fragment ion m/z
+max_frag_mz = 1800                                    # maximum fragment ion m/z
+
+##############################
+###### 2. Search.params ######
+##############################
+
+# Identification related parameters
+ms2_tolerance = 0                                     # MS2 mass accuracy (ppm), use 0 for automatic inference
+ms1_tolerance = 0                                     # MS1 mass accuracy (ppm), use 0 for automatic inference
+n_scans_per_peak = 0                                  # number of scans per peak, use 0 for automatic inference
+unrelated_runs = 0                                    # Different runs will be treated as unrelated, 0 = false (default); 1 = true
+fdr_prec = 0.01                                       # FDR at precursor level
+scoring = 2                                           # 1 = Generic (default); 2 = Peptidoforms; 3 = Proteoforms
+machine_learning = 3                                  # 1 = Linear classifier; 2 = NNs (fast); 3 = NNs (cross-validated) (default)
+
+# Match between runs (MBR)
+MBR = 1                                               # create a spectral library from DIA data and reanalyze using this library, 0 = off; 1 = on (default)
+
+# Quantification related parameters
+quantification_strategy = 3                           # 1 = Legacy (direct); 2 = QuantUMS (high accuracy); 3 = QuantUMS (high precision) (default)
+cross_run_normalization = 4                           # 1 = Global; 2 = RT-dependent (default); 3 = RT & signal-dep. (experimental); 4 = off
+
+# Protein inference mode
+prot_inference = 1                                    # 0 = off; 1 = on (default), if turned on, one protein will be assigned to only one protein group
+proteotypicity = 4                                    # 1 = Isofrom IDs; 2 = Protein names (from FASTA); 3 = Genes (Species-specific); 4 = Genes (default)
+
+##############################
+###### 3. iqQuan.params ######
+##############################
+
+# Quantification method (Important!)
+QuanMethod = 1                                        # 0 = DIANN native (use PG.TopN)
+                                                      # 1 = MaxLFQ (use PG.MaxLFQ)
+
+# Q value cutoffs
+Lib.Q.Value = 0.01                                    # Please use the same column names from DIA-NN report
+Lib.PG.Q.Value = 0.01
+
+# Filter
+allowed_miss_pct = 100                                # filter out proteins based on missing value percentages
+
+# Normalization
+perform_normalization = 1                             # 0 = off, 1 = on
+normalization_method = median                         # use median or mean intensity for cross-run normalization
+percentage_trimmed = 15                               # percentage of most variable intensities to be trimmed for the normalization
+norm_species = ALL                                    # if it is on, normalized to : ALL (default), 1 species for Benchmark: HUMAN; MOUSE; RAT; YEAST; SCHPO; ECOLI; DROME; ARATH; CAEEL; CHICK; DANRE
+
+##############################
+###### Other params     ######
+##############################
+
+library_generation = 2                                # 1 = IDs profiling; 2 = IDs, RT & IM profiling (default); 3 = Smart profiling; 4 = Full profiling
+speed_RAM_usage = 1                                   # 1 = Optimal results (default); 2 = Low RAM usage; 3 = Low RAM & high speed; 4 = Ultra-fast
+n_CPU_threads = 64                                    # number of CPU threads used for running
+log_level = 5                                         # specify how detailed the information reported in the log file, use numbers between 0~5
+proteoDA2 = 1                                         # 0 = off, 1 = on
+additional_options = null                             # null (default); others, e.g. --var-mod Dimethyl,28.0313,KR
